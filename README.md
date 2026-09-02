@@ -1,6 +1,6 @@
 <div align="center">
   <img src="./app/frontend/public/favicon.svg" width="72" height="72" alt="aegis-operations logo" />
-  <h1>aegis-operations</h1>
+  <h1>Aegis Operations</h1>
   <p><strong>Evidence-grounded security operations for human analysts and browser agents.</strong></p>
   <p>Ingest authentic endpoint telemetry, evaluate official Sigma rules, correlate alerts,
   and investigate every decision against the same shared case record.</p>
