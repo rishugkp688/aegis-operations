@@ -1,4 +1,8 @@
 import { api } from "./api";
+import {
+  listExistingWebMcpTools,
+  type GetWebMcpTools,
+} from "./webmcpCompatibility";
 
 type JsonSchema = Record<string, unknown>;
 type ToolDefinition = {
@@ -14,7 +18,7 @@ type ToolDefinition = {
 
 type WebMcpModelContext = {
   registerTool: (tool: ToolDefinition) => Promise<void> | void;
-  getTools?: () => Promise<Array<string | { name?: string }>>;
+  getTools?: GetWebMcpTools;
 };
 
 type WebMcpRegistrationResult = WebMcpAvailability & { failures: string[] };
@@ -301,8 +305,8 @@ export async function registerWebMcpTools(
   ];
 
   const registration = (async (): Promise<WebMcpRegistrationResult> => {
-    const listedTools = await context.getTools?.().catch(() => []);
-    const existingNames = new Set((listedTools ?? []).flatMap((tool) => {
+    const listedTools = await listExistingWebMcpTools(context.getTools?.bind(context));
+    const existingNames = new Set(listedTools.flatMap((tool) => {
       const name = typeof tool === "string" ? tool : tool.name;
       return name ? [name] : [];
     }));
