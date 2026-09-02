@@ -1,0 +1,2 @@
+"""WebMCP security investigation application."""
+

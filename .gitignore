@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.db
+*.db-shm
+*.db-wal
+node_modules/
+app/frontend/dist/
+*.tsbuildinfo
+app/frontend/vite.config.js
+app/frontend/vite.config.d.ts
+.env
+.DS_Store
+
+# Local planning and browser-test evidence are not part of the public repository.
+/PLAN.md
+/HACKATHON_PLAN.md
+/test-artifacts/

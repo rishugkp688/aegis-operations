@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "webmcp-security-workspace"
+version = "0.1.0"
+description = "Human and browser-agent security investigation workspace for the WebMCP Challenge"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+  "defusedxml>=0.7,<1",
+  "fastapi>=0.116,<0.117",
+  "pydantic>=2.11,<3",
+  "pysigma>=1.0,<2",
+  "pysigma-backend-sqlite>=1.2,<2",
+  "pysigma-pipeline-sysmon>=2.0,<3",
+  "sqlalchemy>=2.0,<3",
+  "starlette>=0.47,<0.48",
+  "uvicorn[standard]>=0.35,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "httpx>=0.28,<1",
+  "pytest>=8.4,<9",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
