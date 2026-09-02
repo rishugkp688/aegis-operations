@@ -7,10 +7,10 @@ container was smoke-tested locally: it builds the React application, serves it f
 FastAPI, binds to the platform `PORT`, returns `200` from `/api/health`, emits WebMCP and
 browser security headers, and stores SQLite state at `/data/security_workspace.db`.
 
-The configured GitHub remote is reachable, but this local repository currently has no
-commits and the remote has no refs. A GitHub-backed Railway deployment therefore cannot
-start until the project has an initial commit and push. No commit, push, or Railway
-deployment was performed during this review.
+The source is published at
+[`rishugkp688/aegis-operations`](https://github.com/rishugkp688/aegis-operations) on
+`main`, with the first public release marked `v0.1.0`. The repository and container are
+ready to connect to Railway; a public Railway deployment has not yet been verified.
 
 It is not an enterprise multi-tenant SOC deployment. Authentication, RBAC, tenant
 isolation, CSRF protection, rate limiting, centralized audit export, PostgreSQL
@@ -23,7 +23,7 @@ Railway is the shortest reliable path for this project because it builds the che
 Dockerfile, provides managed HTTPS required by WebMCP, supports a persistent volume, and
 can health-check `/api/health`.
 
-1. Commit the reviewed project locally, then push it to the configured GitHub remote.
+1. Use the published `main` branch at release `v0.1.0` or later.
 2. In Railway, create a project and choose **Deploy from GitHub repo**.
 3. Select this repository. Keep the service source directory at the repository root;
    Railway automatically detects the root `Dockerfile`.

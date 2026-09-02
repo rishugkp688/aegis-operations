@@ -1,4 +1,4 @@
-# SOC Workspace Architecture
+# aegis-operations Architecture
 
 **Document status:** Living architecture specification  
 **System version:** 0.1.0  
@@ -7,7 +7,7 @@
 
 ## 1. Executive summary
 
-SOC Workspace is a human-and-agent security investigation system. It ingests security
+`aegis-operations` is a human-and-agent security investigation system. It ingests security
 telemetry, retains the original record, creates a pragmatic normalized representation,
 runs deterministic detection rules, and turns findings into persistent investigations.
 A human analyst and a browser agent operate on the same evidence, hypotheses, and audit
@@ -76,7 +76,7 @@ flowchart LR
     Analyst[Human SOC analyst]
     BrowserAgent[Compatible browser agent]
     Source[Security log source]
-    Workspace[SOC Workspace]
+    Workspace[aegis-operations]
     Storage[(Operational database)]
     Operator[Platform operator]
 
@@ -883,8 +883,9 @@ validation, persistence, authorization, counting, and audit.
 
 Implemented registration behavior:
 
-1. The top-level React page prefers `document.modelContext.registerTool` and falls back
-   to Chrome 149's legacy `navigator.modelContext.registerTool` surface.
+1. The top-level React page uses the current `document.modelContext.registerTool`
+   surface and falls back to Chrome 149's legacy
+   `navigator.modelContext.registerTool` preview.
 2. Eight tools are registered with closed JSON input schemas.
 3. A document-level registration promise makes registration idempotent across React
    StrictMode remounts and development hot updates.
@@ -975,7 +976,7 @@ session claim rather than accept it as arbitrary JSON.
 
 | Method | Path | Purpose |
 |---|---|---|
-| `GET` | `/api/health` | Liveness signal |
+| `GET` | `/api/health` | Application and database readiness signal |
 | `GET` | `/api/workspace` | Dataset and object counts |
 | `GET` | `/api/datasets` | Dataset catalog, provenance, license, and ingestion state |
 | `POST` | `/api/datasets/{dataset_id}/ingest` | Idempotently ingest an attributed Splunk dataset and recompute Sigma detections |
@@ -1144,7 +1145,10 @@ must not be used with credentials.
 
 ### 17.2 Health endpoints
 
-Current `/api/health` is liveness only.
+Current `/api/health` is a combined application/database readiness probe: it executes
+`SELECT 1` and returns `200 {"status":"ok"}` only when the request and database session
+succeed. It is sufficient for the single-process demo but does not distinguish failure
+classes.
 
 Production should separate:
 
@@ -1279,7 +1283,7 @@ The Dockerfile uses a multi-stage build:
 2. Python image installs the backend package.
 3. Built assets are copied into the FastAPI-served frontend directory.
 4. SQLite data is stored under `/data` through a persistent volume.
-5. Uvicorn exposes one HTTP service on port 8000.
+5. Uvicorn exposes one HTTP service on the platform-assigned `PORT`, defaulting to 8000.
 
 ### 20.2 Production deployment requirements
 
@@ -1315,8 +1319,9 @@ Production configuration should add:
 - Dataset upload and retention limits.
 - Feature flags for WebMCP write tools.
 
-Configuration is validated at startup. Secrets are referenced from a secret manager and
-must not be printed.
+The current application reads these values directly from the environment. Production
+must add a typed startup configuration object that rejects invalid values. Secrets must
+be referenced from a secret manager and never printed.
 
 ## 21. Backup, recovery, and retention
 
@@ -1353,15 +1358,17 @@ Legal hold overrides automated deletion and must itself be audited.
 
 ### 22.1 Current verification
 
-- Service tests cover empty state, ingestion, idempotency, search, detection links,
-  shared investigation state, unknown event rejection, and the human-verdict guardrail.
+- Nine service tests cover empty state, ingestion, idempotency, search, detection links,
+  rule-state recomputation, shared investigation state, closed-case immutability, reset,
+  unknown dataset rejection, and the human-verdict guardrail.
 - TypeScript compilation validates frontend contracts.
 - Vite production build validates asset compilation.
 - A live Firefox 154 production-build workflow verifies all three source ingestions,
   11,435-event pagination through offset 11,400, 276-to-22 signal correlation,
   detection content, raw-event inspection, reset, runtime errors, and responsive
-  geometry at 1600px, 1280px, 900px, and mobile width. Screenshots and the report are
-  retained under `test-artifacts/browser/`.
+  geometry at 1600px, 1280px, 900px, and mobile width. Full evidence is retained locally
+  under the intentionally ignored `test-artifacts/browser/`; four curated product
+  screenshots are published under `docs/screenshots/`.
 
 ### 22.2 Production test pyramid
 
@@ -1433,6 +1440,10 @@ Canonical prompts should assert expected operations without grading prose style:
 
 ## 23. CI/CD and supply chain
 
+Current status: the commands below pass locally, but the repository does not yet enforce
+them in CI. The first useful CI slice should run backend tests, TypeScript checking, the
+frontend production build, and a Docker build on every pull request and `main` push.
+
 Recommended pipeline:
 
 ```mermaid
@@ -1479,7 +1490,8 @@ Required work:
 
 ### Stage A — Hackathon-quality reference implementation
 
-Status: largely implemented.
+Status: implemented and released as `v0.1.0`; public hosting and submission assets remain
+release-distribution work rather than application functionality.
 
 - Single container.
 - SQLite.
@@ -1495,7 +1507,7 @@ Status: largely implemented.
 - Alembic migrations.
 - SQLite WAL or PostgreSQL based on concurrency test.
 - Structured logs, metrics, health/readiness, and error envelopes.
-- CSP and complete security headers.
+- Edge-verified CSP, HSTS, and complete production security headers.
 - Dataset upload limits and parser rejection reporting.
 - Case versioning and idempotent mutation keys.
 - Backups and restore drill.
@@ -1595,9 +1607,13 @@ yet production-ready.
 - Audit events are not externally immutable.
 - No SSE for changes from other sessions.
 - No structured production logging, metrics, or distributed tracing.
-- No rate limiting, CSRF defense, CSP, or production identity integration.
+- No rate limiting, CSRF defense, trusted-host policy, or production identity
+  integration. A CSP and baseline browser-security headers are implemented, but still
+  require verification through the eventual production edge.
 - No browser-automated WebMCP evaluation suite yet.
-- No automated Docker build verification in the current development environment.
+- The Docker build, `PORT` binding, `/data` persistence, frontend serving, and health
+  response have been smoke-tested locally, but are not yet enforced by CI or accompanied
+  by image scanning and an SBOM.
 - No tested backup and restore procedure.
 - No formal retention, redaction, or legal-hold policy.
 
@@ -1639,5 +1655,9 @@ The architecture is behaving as intended when:
 ## 30. Related documents
 
 - [`README.md`](README.md): setup, execution, and current feature summary.
-- [`HACKATHON_PLAN.md`](HACKATHON_PLAN.md): competition-focused delivery plan.
-- [`PLAN.md`](PLAN.md): original broad product direction.
+- [`DEPLOYMENT.md`](DEPLOYMENT.md): verified container contract and deployment procedure.
+- [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md): dataset, rule, license, and author
+  provenance.
+
+The original broad plan and hackathon delivery plan remain private working documents and
+are intentionally excluded from the public repository.

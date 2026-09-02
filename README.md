@@ -8,7 +8,8 @@
     <code>11,435 events</code>&nbsp;&nbsp;
     <code>30 Sigma rules</code>&nbsp;&nbsp;
     <code>22 correlated alerts</code>&nbsp;&nbsp;
-    <code>8 WebMCP tools</code>
+    <code>8 WebMCP tools</code>&nbsp;&nbsp;
+    <code>v0.1.0</code>
   </p>
   <p>
     <a href="./ARCHITECTURE.md">Architecture</a> ·
@@ -129,9 +130,10 @@ The expected workflow uses `get_investigation_context`,
 `search_security_events`, `get_event_context`,
 `add_investigation_evidence`, and `create_case_hypothesis`.
 
-The flag exposes the browser API; it does not itself add an agent chat UI. The workspace
-supports both Chrome 149's `navigator.modelContext` surface and the newer
-`document.modelContext` surface. Check the exact runtime state in DevTools:
+The flag exposes the browser API; it does not itself add an agent chat UI. The current
+WebMCP draft uses `document.modelContext`; this implementation also supports Chrome
+149's legacy `navigator.modelContext` preview surface. Check the exact runtime state in
+DevTools:
 
 ```js
 window.isSecureContext
@@ -151,8 +153,10 @@ than as a fatal duplicate-name error.
 ## Tests
 
 ```bash
-pytest
-cd app/frontend && npm run build
+.venv/bin/python -m pytest
+cd app/frontend
+npm run lint
+npm run build
 ```
 
 The production-build browser workflow covers all three source ingestions,
