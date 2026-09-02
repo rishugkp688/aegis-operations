@@ -87,7 +87,7 @@ In WebMCP-enabled Chrome, inspect:
 ```js
 window.isSecureContext
 document.modelContext ?? navigator.modelContext
-window.__aegisWebMcpStatus
+window.__aegisOperationsWebMcpStatus
 ```
 
 Expected results are `true`, a model-context object, and eight registered tools.

@@ -37,9 +37,9 @@ declare global {
   }
 
   interface Window {
-    __aegisWebMcpStatus?: WebMcpRegistrationResult;
-    __aegisWebMcpRegistration?: Promise<WebMcpRegistrationResult>;
-    __aegisActiveInvestigation?: () => string | null;
+    __aegisOperationsWebMcpStatus?: WebMcpRegistrationResult;
+    __aegisOperationsWebMcpRegistration?: Promise<WebMcpRegistrationResult>;
+    __aegisOperationsActiveInvestigation?: () => string | null;
   }
 }
 
@@ -67,8 +67,8 @@ export async function registerWebMcpTools(
   // React StrictMode intentionally mounts effects twice in development. Keep the
   // active-case resolver replaceable, but make page-scoped tool registration a
   // document singleton so remounts and Vite hot updates cannot register duplicates.
-  window.__aegisActiveInvestigation = getActiveInvestigationId;
-  const activeInvestigation = () => window.__aegisActiveInvestigation?.() ?? null;
+  window.__aegisOperationsActiveInvestigation = getActiveInvestigationId;
+  const activeInvestigation = () => window.__aegisOperationsActiveInvestigation?.() ?? null;
   const documentContext = document.modelContext;
   const legacyContext = navigator.modelContext;
   const context = typeof documentContext?.registerTool === "function" ? documentContext
@@ -81,15 +81,15 @@ export async function registerWebMcpTools(
       ? "WebMCP API missing · relaunch Chrome 149+ after enabling the flag"
       : "WebMCP requires HTTPS or a localhost URL";
     const status: WebMcpAvailability = { available: false, count: 0, detail, surface: null };
-    window.__aegisWebMcpStatus = { ...status, failures: [] };
+    window.__aegisOperationsWebMcpStatus = { ...status, failures: [] };
     console.warn(`[WebMCP] ${detail}`);
     onAvailability(status);
     return () => undefined;
   }
 
-  if (window.__aegisWebMcpRegistration) {
-    const status = await window.__aegisWebMcpRegistration;
-    window.__aegisWebMcpStatus = status;
+  if (window.__aegisOperationsWebMcpRegistration) {
+    const status = await window.__aegisOperationsWebMcpRegistration;
+    window.__aegisOperationsWebMcpStatus = status;
     onAvailability(status);
     return () => undefined;
   }
@@ -325,10 +325,10 @@ export async function registerWebMcpTools(
     return { available: registered > 0, count: registered, detail, surface, failures };
   })();
 
-  window.__aegisWebMcpRegistration = registration;
+  window.__aegisOperationsWebMcpRegistration = registration;
   const status = await registration;
-  window.__aegisWebMcpStatus = status;
-  if (!status.available) window.__aegisWebMcpRegistration = undefined;
+  window.__aegisOperationsWebMcpStatus = status;
+  if (!status.available) window.__aegisOperationsWebMcpRegistration = undefined;
   if (status.failures.length) console.warn("[WebMCP] Registration failures", status.failures);
   else console.info(`[WebMCP] ${status.detail}`);
   onAvailability(status);

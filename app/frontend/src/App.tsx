@@ -17,7 +17,7 @@ const viewLabels: Record<View, string> = {
 };
 
 const emptyWorkspace: Workspace = {
-  application: "WebMCP Security Investigation Workspace",
+  application: "aegis-operations",
   dataset: "Splunk Attack Data detection lab",
   ingested: false,
   counts: { raw_logs: 0, normalized_events: 0, rules: 0, findings: 0, open_findings: 0, investigations: 0, open_investigations: 0 },
@@ -30,7 +30,7 @@ const DEFAULT_EVENT_PAGE_SIZE = 50;
 
 function initialTheme(): Theme {
   try {
-    const saved = localStorage.getItem("aegis-theme");
+    const saved = localStorage.getItem("aegis-operations-theme");
     if (saved === "dark" || saved === "light") return saved;
   } catch {
     // Storage can be unavailable in hardened or ephemeral browser contexts.
@@ -95,7 +95,7 @@ export default function App() {
     document.documentElement.dataset.theme = theme;
     document.documentElement.style.colorScheme = theme;
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "light" ? "#f3f5f8" : "#080b11");
-    try { localStorage.setItem("aegis-theme", theme); } catch { /* Keep the in-memory preference. */ }
+    try { localStorage.setItem("aegis-operations-theme", theme); } catch { /* Keep the in-memory preference. */ }
   }, [theme]);
 
   useEffect(() => {
@@ -299,7 +299,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div className="brand"><span className="brand-mark">A</span><div><strong>Aegis Operations</strong><small>HUMAN + AGENT SOC</small></div></div>
+        <div className="brand"><span className="brand-mark">A</span><div><strong>aegis-operations</strong><small>HUMAN + AGENT SOC</small></div></div>
         <nav>
           <label>INVESTIGATION WORKFLOW</label>
           {([ ["overview", "1", "Overview"], ["findings", "2", "Alerts"], ["investigation", "3", "Investigations"] ] as [View, string, string][]).map(([key, icon, label]) => <button title={label} key={key} className={view === key ? "active" : ""} onClick={() => setView(key)}><span>{icon}</span>{label}{key === "findings" && workspace.counts.open_findings > 0 && <em>{workspace.counts.open_findings}</em>}</button>)}
@@ -316,7 +316,7 @@ export default function App() {
 
       <main>
         <header className="topbar">
-          <div><span className="eyebrow">AEGIS /</span><strong>{viewLabels[view]}</strong></div>
+          <div><span className="eyebrow">AEGIS-OPERATIONS /</span><strong>{viewLabels[view]}</strong></div>
           <div className="top-actions"><span className="tenant">DETECTION LAB</span><span className={`sensor ${error ? "degraded" : ""}`}><i /> {error ? "ACTION REQUIRED" : "SYSTEM HEALTHY"}</span><button className="theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>{theme === "dark" ? <svg className="theme-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" /></svg> : <svg className="theme-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8a8.5 8.5 0 1 0 11.3 11.3Z" /></svg>}<span className="theme-label">{theme === "dark" ? "Light" : "Dark"}</span></button><span className="avatar" title="Local analyst">RA</span></div>
         </header>
 
@@ -404,7 +404,7 @@ function Overview({
     <div className="page-heading"><div><span className="eyebrow">START HERE</span><h1>Security operations overview</h1><p>Ingest endpoint events, review correlated alerts, and investigate with a human analyst and browser agent sharing the same case.</p></div><div className="live-clock"><i /> WORKSPACE CURRENT</div></div>
     <PageGuide
       title={hasTelemetry ? "Continue your investigation workflow" : "Set up the detection lab"}
-      detail={hasTelemetry ? "Your data is ready. Move from alerts to evidence-backed decisions using the numbered navigation." : "Start by connecting one open-source telemetry source. Aegis will normalize it, evaluate Sigma rules, and create correlated alerts."}
+      detail={hasTelemetry ? "Your data is ready. Move from alerts to evidence-backed decisions using the numbered navigation." : "Start by connecting one open-source telemetry source. aegis-operations will normalize it, evaluate Sigma rules, and create correlated alerts."}
       steps={hasTelemetry ? ["Review prioritized alerts", "Open an investigation", "Collect evidence, test a hypothesis, and record a verdict"] : ["Connect a telemetry source below", "Wait for Sigma detection and correlation", "Open Alerts from step 2 in the navigation"]}
       action={hasTelemetry && workspace.counts.open_findings ? { label: `Review ${workspace.counts.open_findings} open alerts`, onClick: () => navigate("findings") } : undefined}
     />

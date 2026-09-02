@@ -1,9 +1,30 @@
-# WebMCP Security Investigation Workspace
+<div align="center">
+  <img src="./app/frontend/public/favicon.svg" width="72" height="72" alt="aegis-operations logo" />
+  <h1>aegis-operations</h1>
+  <p><strong>Evidence-grounded security operations for human analysts and browser agents.</strong></p>
+  <p>Ingest authentic endpoint telemetry, evaluate official Sigma rules, correlate alerts,
+  and investigate every decision against the same shared case record.</p>
+  <p>
+    <code>11,435 events</code>&nbsp;&nbsp;
+    <code>30 Sigma rules</code>&nbsp;&nbsp;
+    <code>22 correlated alerts</code>&nbsp;&nbsp;
+    <code>8 WebMCP tools</code>
+  </p>
+  <p>
+    <a href="./ARCHITECTURE.md">Architecture</a> ·
+    <a href="./DEPLOYMENT.md">Deployment</a> ·
+    <a href="./THIRD_PARTY_NOTICES.md">Data and rule attribution</a>
+  </p>
+</div>
 
-A demonstration-scale SOC investigation product where a human analyst and a
-browser agent work against the same evidence, hypotheses, and audit timeline.
+![aegis-operations security operations overview](docs/screenshots/command-center.png)
 
 > Detection raises the question. Human and agent collaborate to determine the answer.
+
+`aegis-operations` is a demonstration-scale SOC investigation product where a human
+analyst and a browser agent work against the same evidence, hypotheses, and audit
+timeline. It remains fully usable as a human-first security tool when WebMCP is not
+available.
 
 ## What is implemented
 
@@ -42,6 +63,20 @@ browser agent work against the same evidence, hypotheses, and audit timeline.
 - Eight top-level imperative WebMCP tools
 - Guardrails against invented event/evidence IDs and agent-set final verdicts
 - Explicit untrusted-content annotations for log-returning tools
+
+## Product tour
+
+### Prioritize correlated alerts
+
+![Correlated alert queue with severity, affected entities, ATT&CK techniques, and Sigma matches](docs/screenshots/alerts.png)
+
+### Investigate with an evidence-first workflow
+
+![Guided investigation workflow with related events, alert context, and agent collaboration](docs/screenshots/investigation.png)
+
+### Inspect and control detection content
+
+![Official Sigma detection-rule library with ATT&CK coverage and match counts](docs/screenshots/detection-rules.png)
 
 ## Why WebMCP
 
@@ -101,7 +136,7 @@ supports both Chrome 149's `navigator.modelContext` surface and the newer
 ```js
 window.isSecureContext
 document.modelContext ?? navigator.modelContext
-window.__aegisWebMcpStatus
+window.__aegisOperationsWebMcpStatus
 await (document.modelContext ?? navigator.modelContext)?.getTools?.()
 ```
 
@@ -120,18 +155,18 @@ pytest
 cd app/frontend && npm run build
 ```
 
-The latest production-build Firefox workflow covers all three source ingestions,
+The production-build browser workflow covers all three source ingestions,
 event pagination through the final page, Sigma correlation, the densest 58-event alert,
 related-event progressive disclosure, wrapped original-source inspection, the complete
 manual investigation path, persistent light mode, responsive geometry, and guarded reset.
-Results and screenshots are in
-[`test-artifacts/browser/REPORT.md`](test-artifacts/browser/REPORT.md).
+Browser evidence is generated locally under the intentionally ignored `test-artifacts/`
+directory; the curated product screenshots above are maintained under `docs/screenshots/`.
 
 ## Docker
 
 ```bash
-docker build -t webmcp-soc .
-docker run --rm -p 8000:8000 -v soc-data:/data webmcp-soc
+docker build -t aegis-operations .
+docker run --rm -p 8000:8000 -v aegis-operations-data:/data aegis-operations
 ```
 
 Open `http://localhost:8000`.
@@ -171,12 +206,14 @@ the complete dataset with deterministic pagination, including the final 35-recor
 Third-party artifacts, licenses, and Sigma author attribution are documented in
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
-## Plans
+## Documentation
 
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) documents the implemented architecture,
   production target, security model, operations, and scale path.
-- [`PLAN.md`](PLAN.md) contains the original broad product direction.
-- [`HACKATHON_PLAN.md`](HACKATHON_PLAN.md) contains the competition-focused plan.
+- [`DEPLOYMENT.md`](DEPLOYMENT.md) contains the verified container contract and Railway
+  deployment procedure.
+- [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) records upstream dataset and Sigma
+  attribution.
 
 ## License
 

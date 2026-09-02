@@ -55,7 +55,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(
-    title="WebMCP Security Investigation Workspace",
+    title="aegis-operations",
     version="0.1.0",
     lifespan=lifespan,
 )

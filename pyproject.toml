@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "webmcp-security-workspace"
+name = "aegis-operations"
 version = "0.1.0"
-description = "Human and browser-agent security investigation workspace for the WebMCP Challenge"
+description = "Evidence-grounded security operations for human analysts and browser agents"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }

@@ -154,7 +154,7 @@ def workspace_status(session: Session) -> dict[str, Any]:
         .where(models.Finding.status != "STALE")
     ) or 0
     return {
-        "application": "WebMCP Security Investigation Workspace",
+        "application": "aegis-operations",
         "dataset": "Splunk Attack Data detection lab",
         "ingested": counts["raw_logs"] > 0,
         "counts": counts,

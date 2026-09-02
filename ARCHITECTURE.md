@@ -894,7 +894,7 @@ Implemented registration behavior:
    agent-controlled argument.
 6. Successful write tools notify the UI to refresh shared state.
 7. Registration failures are isolated per tool and reported through both the console and
-   `window.__aegisWebMcpStatus`; one rejected tool cannot conceal successful registrations.
+   `window.__aegisOperationsWebMcpStatus`; one rejected tool cannot conceal successful registrations.
 8. Tools returned by `getTools()` and duplicate-name responses are recognized as already
    registered, preventing a valid browser registry from being mislabeled as unavailable.
 
